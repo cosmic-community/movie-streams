@@ -10,6 +10,7 @@ interface ContentCardProps {
 export default function ContentCard({ content }: ContentCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const poster = content.metadata?.poster
   const title = content.metadata?.title || content.title
@@ -26,6 +27,37 @@ export default function ContentCard({ content }: ContentCardProps) {
 
   const typeLabel = isMovie(content) ? 'Movie' : 'TV Show'
 
+  // Generate properly formatted imgix URL
+  const getPosterUrl = () => {
+    if (!poster?.imgix_url) return null
+    
+    // Ensure the URL has proper optimization parameters
+    const baseUrl = poster.imgix_url
+    const params = new URLSearchParams({
+      w: '400',
+      h: '600',
+      fit: 'crop',
+      auto: 'format,compress',
+      q: '85'
+    })
+    
+    // Check if URL already has parameters
+    const separator = baseUrl.includes('?') ? '&' : '?'
+    return `${baseUrl}${separator}${params.toString()}`
+  }
+
+  const posterUrl = getPosterUrl()
+
+  const handleImageLoad = () => {
+    setImageLoaded(true)
+    setImageError(false)
+  }
+
+  const handleImageError = () => {
+    setImageError(true)
+    setImageLoaded(false)
+  }
+
   return (
     <div 
       className="relative w-48 md:w-56 card-hover cursor-pointer"
@@ -34,32 +66,38 @@ export default function ContentCard({ content }: ContentCardProps) {
     >
       {/* Poster Image */}
       <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-netflix-dark-gray">
-        {poster ? (
-          <img
-            src={`${poster.imgix_url}?w=400&h=600&fit=crop&auto=format,compress`}
-            alt={title}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            width="224"
-            height="336"
-          />
+        {posterUrl && !imageError ? (
+          <>
+            <img
+              src={posterUrl}
+              alt={title}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              width="400"
+              height="600"
+              loading="lazy"
+            />
+            
+            {/* Loading State */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-netflix-dark-gray">
+                <div className="w-8 h-8 border-2 border-netflix-red border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </>
         ) : (
+          /* Fallback when no poster or image error */
           <div className="w-full h-full flex items-center justify-center bg-netflix-medium-gray">
-            <div className="text-center text-netflix-light-gray">
+            <div className="text-center text-netflix-light-gray p-4">
               <div className="text-4xl mb-2">
                 {isMovie(content) ? '🎬' : '📺'}
               </div>
-              <p className="text-sm">{typeLabel}</p>
+              <p className="text-sm font-medium">{typeLabel}</p>
+              <p className="text-xs mt-1 opacity-75">{title}</p>
             </div>
-          </div>
-        )}
-
-        {/* Loading State */}
-        {poster && !imageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-netflix-dark-gray">
-            <div className="w-8 h-8 border-2 border-netflix-red border-t-transparent rounded-full animate-spin" />
           </div>
         )}
 

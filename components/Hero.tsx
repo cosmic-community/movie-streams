@@ -19,19 +19,46 @@ export default function Hero({ content }: HeroProps) {
       ? `${content.metadata.seasons} Season${content.metadata.seasons === 1 ? '' : 's'}`
       : ''
 
+  // Generate properly formatted imgix URL
+  const getHeroImageUrl = () => {
+    if (!poster?.imgix_url) return null
+    
+    const baseUrl = poster.imgix_url
+    const params = new URLSearchParams({
+      w: '1920',
+      h: '1080',
+      fit: 'crop',
+      auto: 'format,compress',
+      q: '85'
+    })
+    
+    const separator = baseUrl.includes('?') ? '&' : '?'
+    return `${baseUrl}${separator}${params.toString()}`
+  }
+
+  const heroImageUrl = getHeroImageUrl()
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Background Image */}
-      {poster && (
+      {heroImageUrl ? (
         <div className="absolute inset-0">
           <img
-            src={`${poster.imgix_url}?w=1920&h=1080&fit=crop&auto=format,compress`}
+            src={heroImageUrl}
             alt={title}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Hide image on error and show gradient background
+              const target = e.target as HTMLImageElement
+              target.style.display = 'none'
+            }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40" />
           <div className="absolute inset-0 hero-gradient" />
         </div>
+      ) : (
+        /* Fallback gradient background when no poster */
+        <div className="absolute inset-0 bg-gradient-to-r from-netflix-red to-black opacity-80" />
       )}
 
       {/* Content */}
