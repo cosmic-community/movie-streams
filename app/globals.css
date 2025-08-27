@@ -2,49 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom styles */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
   body {
-    @apply bg-black text-white antialiased;
-    font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
-  
-  * {
-    box-sizing: border-box;
+    @apply bg-black text-white;
   }
 }
 
 @layer components {
   .hero-gradient {
     background: linear-gradient(
-      77deg,
-      rgba(0, 0, 0, 0.6) 0%,
-      rgba(0, 0, 0, 0) 85%
+      180deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.8) 100%
     );
   }
   
-  .card-hover {
-    @apply transition-transform duration-300 hover:scale-105 hover:z-10;
-  }
-  
-  .netflix-button {
-    @apply bg-netflix-red hover:bg-netflix-red-dark text-white font-semibold py-3 px-6 rounded transition-colors duration-200;
-  }
-  
-  .content-grid {
-    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4;
-  }
-}
-
-@layer utilities {
   .text-shadow {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
   
-  .backdrop-blur-lg {
-    backdrop-filter: blur(20px);
+  .card-hover {
+    transition: transform 0.3s ease, z-index 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  /* Hide scrollbars while keeping scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
