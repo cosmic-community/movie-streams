@@ -48,7 +48,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-black">
       <Header />
       
-      {featuredContent.length > 0 && (
+      {featuredContent.length > 0 && featuredContent[0] && (
         <Hero content={featuredContent[0]} />
       )}
       
