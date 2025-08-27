@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { Content, isMovie, isTVShow } from '@/types'
 
 interface HeroProps {
@@ -5,6 +8,8 @@ interface HeroProps {
 }
 
 export default function Hero({ content }: HeroProps) {
+  const [imageError, setImageError] = useState(false)
+  
   const poster = content.metadata?.poster
   const title = content.metadata?.title || content.title
   const description = content.metadata?.description || ''
@@ -38,20 +43,20 @@ export default function Hero({ content }: HeroProps) {
 
   const heroImageUrl = getHeroImageUrl()
 
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Background Image */}
-      {heroImageUrl ? (
+      {heroImageUrl && !imageError ? (
         <div className="absolute inset-0">
           <img
             src={heroImageUrl}
             alt={title}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              // Hide image on error and show gradient background
-              const target = e.target as HTMLImageElement
-              target.style.display = 'none'
-            }}
+            onError={handleImageError}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40" />
           <div className="absolute inset-0 hero-gradient" />
