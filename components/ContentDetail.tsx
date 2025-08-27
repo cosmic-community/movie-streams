@@ -55,11 +55,6 @@ export default function ContentDetail({ content }: ContentDetailProps) {
               src={heroImageUrl}
               alt={title}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                // Hide image on error and show gradient background
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-              }}
             />
             <div className="absolute inset-0 bg-black bg-opacity-50" />
             <div className="absolute inset-0 hero-gradient" />

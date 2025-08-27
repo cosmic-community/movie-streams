@@ -9,7 +9,6 @@ interface ContentCardProps {
 
 export default function ContentCard({ content }: ContentCardProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
   const poster = content.metadata?.poster
@@ -48,14 +47,8 @@ export default function ContentCard({ content }: ContentCardProps) {
 
   const posterUrl = getPosterUrl()
 
-  const handleImageLoad = () => {
-    setImageLoaded(true)
-    setImageError(false)
-  }
-
   const handleImageError = () => {
     setImageError(true)
-    setImageLoaded(false)
   }
 
   return (
@@ -67,27 +60,15 @@ export default function ContentCard({ content }: ContentCardProps) {
       {/* Poster Image */}
       <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-netflix-dark-gray">
         {posterUrl && !imageError ? (
-          <>
-            <img
-              src={posterUrl}
-              alt={title}
-              className={`w-full h-full object-cover transition-opacity duration-300 ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              width="400"
-              height="600"
-              loading="lazy"
-            />
-            
-            {/* Loading State */}
-            {!imageLoaded && !imageError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-netflix-dark-gray">
-                <div className="w-8 h-8 border-2 border-netflix-red border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-          </>
+          <img
+            src={posterUrl}
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={handleImageError}
+            width="400"
+            height="600"
+            loading="lazy"
+          />
         ) : (
           /* Fallback when no poster or image error */
           <div className="w-full h-full flex items-center justify-center bg-netflix-medium-gray">
